@@ -1,0 +1,8 @@
+L1 = Link('d',0.1283+0.115,     'a',0,          'alpha',pi/2,       'qlim',deg2rad([-360 360]));
+L2 = Link('d',0.030,            'a',0.280,      'alpha',pi,         'qlim',deg2rad([-360 360]));
+L3 = Link('d',0.020,            'a',0,          'alpha',pi/2,       'qlim',deg2rad([-360 360]));
+L4 = Link('d',0.140+0.105,      'a',0,          'alpha',pi/2,       'qlim',deg2rad([-360 360]));
+L5 = Link('d',0.0285+0.0285,    'a',0,          'alpha',pi/2,       'qlim',deg2rad([-360 360]));
+L6 = Link('d',0.105+0.130,      'a',0,          'alpha',0,          'qlim',deg2rad([-360 360]));
+
+kinova = SerialLink([L1 L2 L3 L4 L5 L6],'name','kinova');
