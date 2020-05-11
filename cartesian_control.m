@@ -10,7 +10,7 @@ kinova = SerialLink([L1 L2 L3 L4 L5 L6],'name','kinova');
 currentQ = kinova.getpos();
 endQ = kinova.ikine(transl([x_value y_value z_value]),zeros(1,6),[1 1 1 0 0 0]);
 
-showSteps = true; % true = show steps; false = plot straight away
+showSteps = false; % true = show steps; false = plot straight away
 
 if showSteps == false
     kinova.animate(endQ);
