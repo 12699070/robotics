@@ -3,8 +3,7 @@ for i=1
 img = imread('map.jpg');          % Load a sample image (floor)
 xImage = [-0.4 0.4; -0.4 0.4];      % The x data for the image corners
 yImage = [0.4 0.4; -0.4 -0.4];          % The y data for the image corners
-% zImage = [0.005 0.005; 0.005 0.005];% The z data for the image corners
-zImage = [0 0; 0 0];
+zImage = [0.005 0.005; 0.005 0.005];% The z data for the image corners
 surf(xImage,yImage,zImage,...       % Plot the surface
     'CData',img,...
     'FaceColor','texturemap');
@@ -60,34 +59,41 @@ end
 %% Allocate each cell location
 cellLocation = zeros(40,3); %% preallocate 
 
-% Cell 1 to 9
-for i = 1:9
-    cellLocation(i,:) = [side_1_xOffset(1,i),side_1_yOffset,side_1_zOffset]; % pass in x,y,z
+% Cell 0 (Start)
+cell{1} = [0.35 -0.35 0];
+
+% Cell 2 to 9
+for i = 2:10
+    cellLocation(i,:) = [side_1_xOffset(1,i-1),side_1_yOffset,side_1_zOffset]; % pass in x,y,z
     cell{i} = cellLocation(i,:);
 end
 
 % define cell 10 location here (Jail - big cell on bottom left)
+cell{11} = [-0.35 -0.35 0];
 
-% Cell 11 to 19
-for i = 11:19
-    cellLocation(i,:) = [side_2_xOffset,side_2_yOffset(1,i-10),side_2_zOffset]; % pass in x,y,z
+% Cell 12 to 19
+for i = 12:20
+    cellLocation(i,:) = [side_2_xOffset,side_2_yOffset(1,i-11),side_2_zOffset]; % pass in x,y,z
     cell{i} = cellLocation(i,:);
 end
 
 % define cell 20 location here (Red car - big cell on top left)
+cell{21} = [-0.35 0.35 0];
 
-% Cell 21 to 29
-for i = 21:29
-    cellLocation(i,:) = [side_3_xOffset(1,i-20),side_3_yOffset,side_3_zOffset]; % pass in x,y,z
+% Cell 22 to 29
+for i = 22:30
+    cellLocation(i,:) = [side_3_xOffset(1,i-21),side_3_yOffset,side_3_zOffset]; % pass in x,y,z
     cell{i} = cellLocation(i,:);
 end
 
 % define cell 30 location here (Arrest - big cell on top right)
+cell{31} = [0.35 0.35 0];
 
-% Cell 31 to 39
-for i = 31:39
-    cellLocation(i,:) = [side_4_xOffset,side_4_yOffset(1,i-30),side_4_zOffset]; % pass in x,y,z
+% Cell 32 to 39
+for i = 32:39
+    cellLocation(i,:) = [side_4_xOffset,side_4_yOffset(1,i-31),side_4_zOffset]; % pass in x,y,z
     cell{i} = cellLocation(i,:);
 end
 
-% cell 40 location = cell 0 %
+% cell 40 location = cell 1 %
+cell{40} = cell{1};
