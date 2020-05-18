@@ -84,7 +84,20 @@ InitialMovement(kinova,interpolation,stepsNormal);
 p1.pos = board.limits(1,:);
 p1.origin = [0, 0, 0];
 p1.pose = transl(p1.pos) * trotz(pi/2);
-p1 = LocateParts(p1,'p1hat');
+p2.pos = board.limits(1,:); + [0.05,-0.005,0];
+p2.origin = [0, 0, 0];
+p2.pose = transl(p2.pos) * trotz(pi/2);
+p3.pos = board.limits(1,:); + [0.055,0,0];
+p3.origin = [0, 0, 0];
+p3.pose = transl(p3.pos) * trotz(pi/2);
+p4.pos = board.limits(1,:); + [0.055,-0.005,0];
+p4.origin = [0, 0, 0];
+p4.pose = transl(p4.pos) * trotz(pi/2);
+
+p1 = LocateParts(p1,'p1TopHat');
+p2 = LocateParts(p2,'p2WheelBarrow');
+p3 = LocateParts(p3,'p3Thimble');
+p4 = LocateParts(p4,'p4Iron');
 
 %% Movement
 number = 5;
