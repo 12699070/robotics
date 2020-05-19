@@ -57,7 +57,7 @@ end
 
 %% Allocate each cell location
 for i=1
-cellLocation = zeros(40,3); %% preallocate 
+cellLocation = zeros(41,3); %% preallocate 
 % Cell 1 (Start)
 cell{1} = [0.35 -0.35 zOffset];
 plot3(cell{1}(1,1),cell{1}(1,2),cell{1}(1,3),'.','MarkerSize',markerSize);
