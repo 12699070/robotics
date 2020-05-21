@@ -3,18 +3,14 @@ function LabAssignment2()
 clear all; clc; clf;
 
 % Initialize values
-model = 0;      % 0 = Linear | 1 = Graphical
+model = 1;      % 0 = Linear | 1 = Graphical
 base = [0,0,0];
 
-% Definition of positions and origins of the 3d elements
-board.pos = [base(1:2),0];
-board.origin = [0,0,0];
-
 % D-H Parameters
-cd 'D:\OneDrive - UTS\41013 Robotics\Assignment 2'
+% cd 'D:\OneDrive - UTS\41013 Robotics\Assignment 2'
 switch model
     case 0
-        d1 = 0.1283+0.115; d2 = 0.030; a2 = 0.280; d3 = 0.020; d4 = 0.14+0.105; d5 = 0.0285+0.0285; d6 = 0.105+0.13; % meters (m)
+        d1 = 0.1283+0.115; d2 = 0.030; a2 = 0.280; d3 = -0.020; d4 = 0.14+0.105; d5 = 0.0285+0.0285; d6 = 0.105+0.13; % meters (m)
 
         L1 = Link('d',d1,'a',0,'alpha',pi/2,'offset',0,'qlim',[deg2rad(-170),deg2rad(170)]);
         L2 = Link('d',d2,'a',a2,'alpha',0,'offset',pi/2,'qlim',[deg2rad(-170),deg2rad(170)]);
@@ -31,19 +27,16 @@ switch model
         clf;
 end
 
-% Define two different colors
-kinova.model.comment = 'c.';
 % Locate the robots basis
 kinova.model.base = transl(base);
 
 % Define the size of the workspace
-areaSize = 0.68;
+areaSize = 0.1;
 workspace = [-areaSize+base(1), areaSize+base(1), ...
             -areaSize+base(2), areaSize+base(2), ...
             0, 1];
 scale = 0.5;
 
-% Plot both robots
 % Define initial joints
 qo = deg2rad([0,0,0,0,0,0]); % qo = zeros(1,6);
 % Define waiting joints
@@ -52,23 +45,16 @@ switch model
     case 0
         kinova.model.plot(qo,'workspace',workspace,'scale',scale);
         hold on
-%         kinova.model.teach()
     case 1
         kinova.workspace = workspace;
         kinova.qo = qo;
+        hold on
         kinova.PlotAndColourRobot();
         hold on
 end
 
-% Locate pieces
-board = LocateParts(board,'board');
-separ = 0.03;
-board.limits(1,:) = min(board.verts) + [separ,separ,0];
-board.limits(2,:) = max(board.verts) - [separ,separ,0];
-% 4*8 + 7*2 = 46
-board.length = (board.limits(2,1) - board.limits(1,1));
-board.square = board.length/46*4;
-
+% Teach model
+kinova.model.teach()
 
 % Variables
 % input('Press enter to begin')
