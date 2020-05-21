@@ -1,4 +1,4 @@
-function Initiate(currentCell,diceNumber,doneInit)
+function InitiateMovement(currentCell,diceNumber,doneInit)
 
 %% Settings
 for i=1
