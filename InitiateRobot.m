@@ -1,4 +1,4 @@
-function [board,cell,kinova,var] = InitiateRobot()
+function [board,cell,kinova,var,pieces] = InitiateRobot()
 %% Settings
 for i=1
     % Maybe the stucture var is not necessary, we could always put the
@@ -9,14 +9,16 @@ for i=1
 end
 
 %% Plot game board
-% Structure board has all the info related with the board and its position
-board.img = imread('map.jpg');                  % Load the board image
-board.xImage = [-0.4 0.4; -0.4 0.4];            % X data for the image corners
-board.yImage = [0.4 0.4; -0.4 -0.4];            % Y data for the image corners
-board.zImage = [0.005 0.005; 0.005 0.005];      % Z data for the image corners
-surf(board.xImage,board.yImage,board.zImage,... % Plot the surface
-    'CData',board.img,'FaceColor','texturemap');
-hold on;
+for i=1
+    % Structure board has all the info related with the board and its position
+    board.img = imread('map.jpg');                  % Load the board image
+    board.xImage = [-0.4 0.4; -0.4 0.4];            % X data for the image corners
+    board.yImage = [0.4 0.4; -0.4 -0.4];            % Y data for the image corners
+    board.zImage = [0.005 0.005; 0.005 0.005];      % Z data for the image corners
+    surf(board.xImage,board.yImage,board.zImage,... % Plot the surface
+        'CData',board.img,'FaceColor','texturemap');
+    hold on;
+ end
 
 %% Input positions and offsets
 for i=1
@@ -142,7 +144,28 @@ for i=1
         end
     end
     
-    %Plot points on map
+    %% Locate the pieces in the GO cell
+%     clf
+    pieces.p = {'p1TopHat','p2WheelBarrow','p3Thimble','p4Iron'};
+    % Creat offsets to separate pieces from the middle of the cell
+    pieces.offsets =    [0.035,0.015,var.zOffset.EEF; ...
+                        0.035,-0.038,var.zOffset.EEF;...
+                        -0.015,0.015,var.zOffset.EEF;...
+                        -0.015,-0.038,var.zOffset.EEF];
+    pieces.origin = [0,0,0];
+    for j = 1:4
+        fig = ['piece' num2str(j)];
+        pieces.(fig).pos = cell{1} + pieces.offsets(j,:);
+        pieces.(fig).origin = [0,0,0];
+        pieces.(fig).name = char(pieces.p(j));
+        pieces.(fig).offset = pieces.offsets(j,:);
+        pieces.(fig) = LocateParts(pieces.(fig),char(pieces.p(j)));
+%         pieces.(fig).offset
+
+        hold on
+    end
+    
+    %% Plot points on map
     %4 sides
     plot3(board.side1.xOffsetMarker,board.side1.yOffsetMarker,var.zOffset.Marker,'.','MarkerSize',markerSize);
     plot3(board.side2.xOffsetMarker,board.side2.yOffsetMarker,var.zOffset.Marker,'.','MarkerSize',markerSize);

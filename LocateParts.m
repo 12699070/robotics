@@ -6,12 +6,12 @@ function fig = LocateParts(fig,i)
 fig.vertexCount = size(fig.v,1);
 
 % Move center to specific location
-fig.verts = fig.v - repmat(fig.origin,fig.vertexCount,1);
-% p.verts = p.v
+fig.verts = fig.v;
+try fig.verts = fig.v - repmat(fig.origin,fig.vertexCount,1); end
 
 % Locate the piece in its position
 fig.pieceTr = makehgtform('translate',fig.pos);
-try fig.pieceTr = fig.pieceTr * trotz(fig.angle - pi/2); end
+% try fig.pieceTr = fig.pieceTr * trotz(fig.angle - pi/2); end
 
 fig.updatedPoints = [fig.pieceTr * [fig.verts,ones(fig.vertexCount,1)]']';
 
