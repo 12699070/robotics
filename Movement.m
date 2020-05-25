@@ -56,21 +56,21 @@ for i=1
                 theta(1,i) = pi;               % Roll angle
                 theta(2,i) = 0;                % Pitch angle
                 theta(3,i) = 0;                % Yaw angle
-                rotat = pi/2;
+                rotat = -pi/2;
             end
             
             if currentCell >= board.side3.start && currentCell < board.side4.start
                 theta(1,i) = 0;                % Roll angle
                 theta(2,i) = pi;               % Pitch angle
                 theta(3,i) = pi/2;                % Yaw angle
-                rotat = pi;
+                rotat = -pi;
             end
             
             if currentCell >= board.side4.start-1 && currentCell < 40
                 theta(1,i) = 0;               % Roll angle
                 theta(2,i) = pi;                % Pitch angle
                 theta(3,i) = 0;                % Yaw angle
-                rotat = 2*pi/3;
+                rotat = -2*pi/3;
             end
         end
         
