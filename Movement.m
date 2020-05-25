@@ -1,4 +1,4 @@
-function endCell = Movement(currentCell,diceNumber,board,cell,kinova,var,piece)
+function endCell = Movement(currentCell,diceNumber,board,cell,kinova,var,piece,brick)
 
 %% Input simulation parameters
 for i=1
@@ -100,6 +100,7 @@ for i=1
                 jointTrajectory = jtraj(currentQ,endQ,var.robotStep);
                 for trajStep = 1:size(jointTrajectory,1)
                     q1 = jointTrajectory(trajStep,:);
+                    IsCollision(kinova,q1,brick,false);
                     kinova.animate(q1);
                 end
                 animateGuessQ = false; %once
@@ -148,8 +149,8 @@ for i=1
                 plot3(x(1,:),x(2,:),x(3,:),'k.','LineWidth',1)
             end
             for j = 1:size(qMatrix)
+                result = IsCollision(kinova,qMatrix(j,:),brick,false);
                 kinova.animate(qMatrix(j,:));
-                
                 piece.pos = [x(1,j),x(2,j),x(3,j)];
                 piece.pose = makehgtform('translate',piece.pos);
 %                 try piece.pose = piece.pose * trotz(); end
@@ -179,6 +180,7 @@ for i=1
     jointTrajectory = jtraj(currentQ,endQ,var.robotStep);
     for trajStep = 1:size(jointTrajectory,1)
         q1 = jointTrajectory(trajStep,:);
+        result = IsCollision(kinova,qMatrix(j,:),brick,false);
         kinova.animate(q1);
     end
 end
