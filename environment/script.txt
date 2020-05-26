@@ -23,3 +23,15 @@ for i=1
         'CData',img,...
         'FaceColor','texturemap');
 end
+
+%% Background
+for i=1
+    img = imread('background.jpg');     % Load an image (front)
+    xImage = [-1 1; -1 1];   % The x data for the image corners
+    yImage = [-1 -1; -1 -1]; % The y data for the image corners
+    zImage = [1 1; -0.75 -0.75];         % The z data for the image corners
+    surf(xImage,yImage,zImage,...    % Plot the surface
+        'CData',img,...
+        'FaceColor','texturemap');
+    hold on
+end
