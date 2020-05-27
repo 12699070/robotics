@@ -1,8 +1,16 @@
-function endCell = Movement(currentCell,diceNumber,board,cell,kinova,var,piece,brick)
+function endCell = Movement(currentPlayerLocation,playerNumber,diceNumber,board,cell,kinova,var,piece,brick)
+%% Player locations
+for i=1
+    currentCell = currentPlayerLocation(playerNumber);
+    occupiedCell_1 = currentPlayerLocation(1);
+    occupiedCell_2 = currentPlayerLocation(2);
+    occupiedCell_3 = currentPlayerLocation(3);
+    occupiedCell_4 = currentPlayerLocation(4);
+end
 
 %% Input simulation parameters
 for i=1
-    totalTime = 0.02; % was 0.05 (s)
+    totalTime = 0.01; % was 0.05 (s)
     controlFreq = 0.002;
 end
 
@@ -32,7 +40,7 @@ for i=1
 end
 
 %% Animate RMRC
-for i=1
+for j=1
     s = lspb(0,1,steps);                        % Trapezoidal trajectory scalar
     endCell = currentCell+diceNumber;           % Count the steps
     counter = 0;
@@ -42,54 +50,69 @@ for i=1
     while currentCell < endCell
         %Loop through parameter of each cells
         for i=1:steps
-            x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1) + piece.offset(1);     % Points in x
-            x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2) + piece.offset(2);     % Points in y
-            x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;                                 % Points in z
-            if currentCell >= board.side1.start && currentCell < board.side2.start
-                theta(1,i) = pi;               % Roll angle
-                theta(2,i) = 0;                % Pitch angle
-                theta(3,i) = pi/2;             % Yaw angle
-                rotat = 0;
+            %Check if the next cell is occupied, if it is -> offset
+            if currentCell+1 == occupiedCell_1 || currentCell+1 == occupiedCell_2 || currentCell+1 == occupiedCell_3 || currentCell+1 == occupiedCell_4
+                if currentCell+1 >= board.side1.start && currentCell+1 < board.side2.start %side 1
+                    x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1);               % Points in x
+                    x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2) - 0.05;        % Points in y
+                    x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
+                end
+                if currentCell+1 >= board.side2.start && currentCell+1 < board.side3.start %side 2
+                    x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1) - 0.05;        % Points in x
+                    x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2);               % Points in y
+                    x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
+                end
+                if currentCell+1 >= board.side3.start && currentCell+1 < board.side4.start %side 3
+                    x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1);               % Points in x
+                    x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2) + 0.05;        % Points in y
+                    x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
+                end
+                if currentCell+1 >= board.side4.start && currentCell+1 < 41 %side 4
+                    x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1) + 0.05;        % Points in x
+                    x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2);               % Points in y
+                    x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
+                end            
+            
+            else
+            x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1);     % Points in x
+            x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2);     % Points in y
+            x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;                         % Points in z
             end
             
-            if currentCell >= board.side2.start-1 && currentCell < board.side3.start %board.side2.start-1(start rotate @cell 10)
-                theta(1,i) = pi;               % Roll angle
-                theta(2,i) = 0;                % Pitch angle
-                theta(3,i) = 0;                % Yaw angle
-                rotat = -pi/2;
+            %Assign EEF rotation, guessQ for each side
+            if currentCell >= board.side1.start && currentCell < board.side2.start %side 1
+                theta(1,i) = pi;                % Roll angle
+                theta(2,i) = 0;                 % Pitch angle
+                theta(3,i) = pi/2;              % Yaw angle
+                guessQ = board.side1.initGuess; % Initial guess for joint angles
+                phi = 0;                        % Rotation of pieces
             end
             
-            if currentCell >= board.side3.start && currentCell < board.side4.start
-                theta(1,i) = 0;                % Roll angle
-                theta(2,i) = pi;               % Pitch angle
-                theta(3,i) = pi/2;                % Yaw angle
-                rotat = -pi;
+            if currentCell >= board.side2.start-1 && currentCell < board.side3.start %side 2
+                theta(1,i) = pi;                % Roll angle
+                theta(2,i) = 0;                 % Pitch angle
+                theta(3,i) = 0;                 % Yaw angle
+                guessQ = board.side2.initGuess; % Initial guess for joint angles
+                phi = -pi/2;                    % Rotation of pieces
             end
             
-            if currentCell >= board.side4.start-1 && currentCell < 40
-                theta(1,i) = 0;               % Roll angle
+            if currentCell >= board.side3.start && currentCell < board.side4.start %side 3
+                theta(1,i) = 0;                 % Roll angle
                 theta(2,i) = pi;                % Pitch angle
-                theta(3,i) = 0;                % Yaw angle
-                rotat = -2*pi/3;
+                theta(3,i) = pi/2;              % Yaw angle
+                guessQ = board.side3.initGuess; % Initial guess for joint angles
+                phi = -pi;                      % Rotation of pieces
+            end
+            
+            if currentCell >= board.side4.start-1 && currentCell < 41 %side 4
+                theta(1,i) = 0;                 % Roll angle
+                theta(2,i) = pi;                % Pitch angle
+                theta(3,i) = 0;                 % Yaw angle
+                guessQ = board.side4.initGuess; % Initial guess for joint angles
+                phi = -3*pi/2;                  % Rotation of pieces
             end
         end
-        
-        %Assign initial guess Q
-        for i=1
-            if board.side1.start <= currentCell  && currentCell < board.side2.start
-                guessQ = board.side1.initGuess;  % Initial guess for joint angles
-            end
-            if board.side2.start <= currentCell && currentCell < board.side3.start
-                guessQ = board.side2.initGuess;  % Initial guess for joint angles
-            end
-            if board.side3.start <= currentCell && currentCell < board.side4.start
-                guessQ = board.side3.initGuess;  % Initial guess for joint angles
-            end
-            if board.side4.start <= currentCell && currentCell < 40
-                guessQ = board.side4.initGuess;  % Initial guess for joint angles
-            end
-        end
-        
+          
         % Go to pickup
         for i=1
             T = [rpy2r(theta(1,1),theta(2,1),theta(3,1)) x(:,1);zeros(1,3) 1]; % Create transformation of first point and angle
@@ -100,7 +123,8 @@ for i=1
                 jointTrajectory = jtraj(currentQ,endQ,var.robotStep);
                 for trajStep = 1:size(jointTrajectory,1)
                     q1 = jointTrajectory(trajStep,:);
-                    IsCollision(kinova,q1,brick,false);
+                    % Check for collision before each step
+                    IsCollision(kinova,q1,brick,true);
                     kinova.animate(q1);
                 end
                 animateGuessQ = false; %once
@@ -149,17 +173,18 @@ for i=1
                 plot3(x(1,:),x(2,:),x(3,:),'k.','LineWidth',1)
             end
             for j = 1:size(qMatrix)
-                result = IsCollision(kinova,qMatrix(j,:),brick,false);
+                % Check for collision before each step
+                IsCollision(kinova,qMatrix(j,:),brick,true);
                 kinova.animate(qMatrix(j,:));
-                piece.pos = [x(1,j),x(2,j),x(3,j)];
-                piece.pose = makehgtform('translate',piece.pos);
-%                 try piece.pose = piece.pose * trotz(); end
-                % Transform the vertices
-                piece.updatedPoints = (piece.pose * trotz(rotat) * [piece.verts,ones(piece.vertexCount,1)]')';
-                % Update the mesh vertices in the patch handle
-                piece.mesh_h.Vertices = piece.updatedPoints(:,1:3);
+                
+                % Update piece location
+                piece.pos = [x(1,j),x(2,j),x(3,j)-(var.zOffset.EEF-var.zOffset.pieces)];     % Define new position
+                piece.pose = makehgtform('translate',piece.pos) * trotz(phi); % Translation * Z rotation
+                piece.updatedPoints = (piece.pose * [piece.verts,ones(piece.vertexCount,1)]')'; % Transform the vertices
+                piece.mesh_h.Vertices = piece.updatedPoints(:,1:3); % Update the mesh vertices in the patch handle
             end
-            currentCell = currentCell+1; %update current cell
+            currentCell = currentCell+1; % Update current cell
+            
         end
         
         %Reset counting
@@ -176,11 +201,12 @@ end
 %% Go home
 for i=1
     currentQ = kinova.getpos();
-    endQ = [currentQ(1,1), 0 0 0 0 0]; %Don't rotate base
+    endQ = [currentQ(1,1), 0 0 0 0 0]; % Don't rotate base
     jointTrajectory = jtraj(currentQ,endQ,var.robotStep);
     for trajStep = 1:size(jointTrajectory,1)
         q1 = jointTrajectory(trajStep,:);
-        result = IsCollision(kinova,qMatrix(j,:),brick,false);
+        % Check for collision before each step
+        IsCollision(kinova,qMatrix(j,:),brick,true);
         kinova.animate(q1);
     end
 end

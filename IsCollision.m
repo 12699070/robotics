@@ -32,10 +32,10 @@ for qIndex = 1:size(qMatrix,1)
         end    
     end
 end
-if result == true
-%     inputs = struct('robot',robot,'qMatrix',qMatrix,'faces',faces,'vertex',vertex,'facesNormals',faceNormals,'returnOnceFound',returnOnceFound);
-    EStopState(result, 2)   % Type 2 = Collision detected
-end
+% if result == true
+% %     inputs = struct('robot',robot,'qMatrix',qMatrix,'faces',faces,'vertex',vertex,'facesNormals',faceNormals,'returnOnceFound',returnOnceFound);
+%     EStopState(result, 2)   % Type 2 = Collision detected
+% end
 end
 
 %% GetLinkPoses
