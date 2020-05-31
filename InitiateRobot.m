@@ -3,8 +3,6 @@ function [board,cell,kinova,var,pieces] = InitiateRobot()
 for i=1
     % Maybe the stucture var is not necessary, we could always put the
     % variables we want in the other function (Movement.m)
-    var.robotStep = 20;
-    var.plotPath = false;
     var.plotCellMarker = false;
     markerSize = 50;
 end

@@ -8,10 +8,16 @@ for i=1
     occupiedCell_4 = currentPlayerLocation(4);
 end
 
+%% Settings
+for i=1
+    var.robotStep = 120;
+    var.plotPath = false;
+end
+
 %% Input simulation parameters
 for i=1
-    totalTime = 0.01; % was 0.05 (s)
-    controlFreq = 0.002;
+    totalTime = 0.09; % was 0.05 (s) vid: 0.09
+    controlFreq = 0.002; 
 end
 
 %% Set parameters for the simulation
@@ -22,10 +28,10 @@ for i=1
     delta = 2*pi/steps;                 % Small angle change
     epsilon = 0.1;                      % Threshold value for manipulability/Damped Least Squares
     W = diag([1 1 1 0.1 0.1 0.1]);      % Weighting matrix for the velocity vector
-    board.side1.start = 1;              % Side 1 starts at cell 1
-    board.side2.start = 11;             % Side 2 starts at cell 11
-    board.side3.start = 21;             % Side 3 starts at cell 21
-    board.side4.start = 31;             % Side 4 starts at cell 31
+    board.side1.startCell = 1;              % Side 1 starts at cell 1
+    board.side2.startCell = 11;             % Side 2 starts at cell 11
+    board.side3.startCell = 21;             % Side 3 starts at cell 21
+    board.side4.startCell = 31;             % Side 4 starts at cell 31
 end
 
 %% Allocate array data
@@ -52,22 +58,22 @@ for j=1
         for i=1:steps
             %Check if the next cell is occupied, if it is -> offset
             if currentCell+1 == occupiedCell_1 || currentCell+1 == occupiedCell_2 || currentCell+1 == occupiedCell_3 || currentCell+1 == occupiedCell_4
-                if currentCell+1 >= board.side1.start && currentCell+1 < board.side2.start %side 1
+                if currentCell+1 >= board.side1.startCell && currentCell+1 < board.side2.startCell %side 1
                     x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1);               % Points in x
                     x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2) - 0.05;        % Points in y
                     x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
                 end
-                if currentCell+1 >= board.side2.start && currentCell+1 < board.side3.start %side 2
+                if currentCell+1 >= board.side2.startCell && currentCell+1 < board.side3.startCell %side 2
                     x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1) - 0.05;        % Points in x
                     x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2);               % Points in y
                     x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
                 end
-                if currentCell+1 >= board.side3.start && currentCell+1 < board.side4.start %side 3
+                if currentCell+1 >= board.side3.startCell && currentCell+1 < board.side4.startCell %side 3
                     x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1);               % Points in x
                     x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2) + 0.05;        % Points in y
                     x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
                 end
-                if currentCell+1 >= board.side4.start && currentCell+1 < 41 %side 4
+                if currentCell+1 >= board.side4.startCell && currentCell+1 < 41 %side 4
                     x(1,i) = (1-s(i))*cell{currentCell}(1,1) + s(i)*cell{currentCell+1}(1,1) + 0.05;        % Points in x
                     x(2,i) = (1-s(i))*cell{currentCell}(1,2) + s(i)*cell{currentCell+1}(1,2);               % Points in y
                     x(3,i) = 0.05 + -0.05*cos(i*delta) + var.zOffset.EEF;
@@ -80,7 +86,7 @@ for j=1
             end
             
             %Assign EEF rotation, guessQ for each side
-            if currentCell >= board.side1.start && currentCell < board.side2.start %side 1
+            if currentCell >= board.side1.startCell && currentCell < board.side2.startCell %side 1
                 theta(1,i) = pi;                % Roll angle
                 theta(2,i) = 0;                 % Pitch angle
                 theta(3,i) = pi/2;              % Yaw angle
@@ -88,7 +94,7 @@ for j=1
                 phi = 0;                        % Rotation of pieces
             end
             
-            if currentCell >= board.side2.start-1 && currentCell < board.side3.start %side 2
+            if currentCell >= board.side2.startCell-2 && currentCell < board.side3.startCell %side 2 (-2 because strange movement if -1)
                 theta(1,i) = pi;                % Roll angle
                 theta(2,i) = 0;                 % Pitch angle
                 theta(3,i) = 0;                 % Yaw angle
@@ -96,7 +102,7 @@ for j=1
                 phi = -pi/2;                    % Rotation of pieces
             end
             
-            if currentCell >= board.side3.start && currentCell < board.side4.start %side 3
+            if currentCell >= board.side3.startCell && currentCell < board.side4.startCell %side 3
                 theta(1,i) = 0;                 % Roll angle
                 theta(2,i) = pi;                % Pitch angle
                 theta(3,i) = pi/2;              % Yaw angle
@@ -104,7 +110,7 @@ for j=1
                 phi = -pi;                      % Rotation of pieces
             end
             
-            if currentCell >= board.side4.start-1 && currentCell < 41 %side 4
+            if currentCell >= board.side4.startCell-2 && currentCell < 41 %side 4
                 theta(1,i) = 0;                 % Roll angle
                 theta(2,i) = pi;                % Pitch angle
                 theta(3,i) = 0;                 % Yaw angle
