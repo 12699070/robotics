@@ -10,13 +10,13 @@ end
 
 %% Settings
 for i=1
-    var.robotStep = 120;
+    var.robotStep = 20;
     var.plotPath = false;
 end
 
 %% Input simulation parameters
 for i=1
-    totalTime = 0.09; % was 0.05 (s) vid: 0.09
+    totalTime = 0.01; % was 0.05 (s) vid: 0.09
     controlFreq = 0.002; 
 end
 
@@ -199,7 +199,7 @@ for j=1
                 currentCell = 1;
                 endCell = endCell-40;
             end
-            counter = counter+1 % Display to console
+            counter = counter+1; % Display to console
         end
     end
 end
