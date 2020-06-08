@@ -11,17 +11,17 @@ if value == true
         case 1  % Press buttom
             disp('E-STOP PRESSED. ROBOT HAS BEEN PAUSED')
             
-        case 2  % Detect collision
+        case 2  % Collision detected
             disp('COLLISION DETECTED')
         
-        case 3
+        case 3  % Workspace limits
             disp('ENTERING WORKSPACE')
             
     end
     value = false;
     uiwait;
         
-elseif value == false
+elseif (value == false) && (type == 1)
     disp('RESUME')
     value = true;
     uiresume;

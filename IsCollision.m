@@ -1,19 +1,24 @@
 %% IsCollision
-% This is based upon the output of questions 2.5 and 2.6
-% Given a robot model (robot), and trajectory (i.e. joint state vector) (qMatrix)
-% and triangle obstacles in the environment (faces,vertex,faceNormals)
+% Function obtained from Lab9 - Quiz 4 
+
+% robot = Robot model
+% qMatrix = Joint state vector (trajectory)
+% faces,vertex,faceNormals = Triangles obstacle
+
 function result = IsCollision(robot,qMatrix,brick,returnOnceFound)
 if nargin < 4
     returnOnceFound = true;
 end
+% Initialize the result
 result = false;
 
+% Triangles obstacle 
 faces = brick.f;
 vertex = brick.updatedPoints(:,1:3);
 faceNormals = [brick.data.vertex.nx,brick.data.vertex.ny,brick.data.vertex.nz];
 
 for qIndex = 1:size(qMatrix,1)
-    % Get the transform of every joint (i.e. start and end of every link)
+    % Transforms of every joint of the robot model
     tr = GetLinkPoses(qMatrix(qIndex,:), robot);
 
     % Go through each link and also each triangle face
@@ -22,8 +27,8 @@ for qIndex = 1:size(qMatrix,1)
             vertOnPlane = vertex(faces(faceIndex,1)',:);
             [intersectP,check] = LinePlaneIntersection(faceNormals(faceIndex,:),vertOnPlane,tr(1:3,4,i)',tr(1:3,4,i+1)'); 
             if check == 1 && IsIntersectionPointInsideTriangle(intersectP,vertex(faces(faceIndex,:)',:))
-                plot3(intersectP(1),intersectP(2),intersectP(3),'g*');
-                display('Intersection');
+                plot3(intersectP(1),intersectP(2),intersectP(3),'r*');
+%                 display('Intersection');n
                 result = true;
                 if returnOnceFound
                     return
@@ -32,30 +37,21 @@ for qIndex = 1:size(qMatrix,1)
         end    
     end
 end
-% if result == true
-% %     inputs = struct('robot',robot,'qMatrix',qMatrix,'faces',faces,'vertex',vertex,'facesNormals',faceNormals,'returnOnceFound',returnOnceFound);
-%     EStopState(result, 2)   % Type 2 = Collision detected
-% end
 end
 
 %% GetLinkPoses
-% q - robot joint angles
-% robot -  seriallink robot model
-% transforms - list of transforms
-function [ transforms ] = GetLinkPoses( q, robot)
-
+function transforms = GetLinkPoses(q, robot)    % q = Robot joint angles | Robot = Robot model
+% Links
 links = robot.links;
+% Transforms
 transforms = zeros(4, 4, length(links) + 1);
 transforms(:,:,1) = robot.base;
 
 for i = 1:length(links)
     L = links(1,i);
-    
-    current_transform = transforms(:,:, i);
-    
-    current_transform = current_transform * trotz(q(1,i) + L.offset) * ...
-    transl(0,0, L.d) * transl(L.a,0,0) * trotx(L.alpha);
-    transforms(:,:,i + 1) = current_transform;
+    currentTransform = transforms(:,:,i);
+    currentTransform = currentTransform * trotz(q(1,i)+L.offset) * transl(0,0,L.d) * transl(L.a,0,0) * trotx(L.alpha);
+    transforms(:,:,i + 1) = currentTransform;
 end
 end
 
@@ -73,22 +69,22 @@ w = point1OnLine - pointOnPlane;
 D = dot(planeNormal,u);
 N = -dot(planeNormal,w);
 check = 0; %#ok<NASGU>
-if abs(D) < 10^-7        % The segment is parallel to plane
+if abs(D) < 10^-7       % The segment is parallel to plane
     if N == 0           % The segment lies in plane
         check = 2;
         return
     else
-        check = 0;       %no intersection
+        check = 0;      % No intersection
         return
     end
 end
 
-%compute the intersection parameter
+% Compute the intersection parameter
 sI = N / D;
 intersectionPoint = point1OnLine + sI.*u;
 
 if (sI < 0 || sI > 1)
-    check= 3;          %The intersection point  lies outside the segment, so there is no intersection
+    check= 3;          % The intersection point lies outside the segment, so there is no intersection
 else
     check=1;
 end
@@ -96,10 +92,8 @@ end
 
 
 %% IsIntersectionPointInsideTriangle
-% Given a point which is known to be on the same plane as the triangle
-% determine if the point is 
-% inside (result == 1) or 
-% outside a triangle (result ==0 )
+% Check point inside the triangle at a distance lower than 0.05 (result = 1) or outside (result = 0)
+
 function result = IsIntersectionPointInsideTriangle(intersectP,triangleVerts)
 
 u = triangleVerts(2,:) - triangleVerts(1,:);
@@ -128,7 +122,13 @@ if (t < 0.0 || (s + t) > 1.0)  % intersectP is outside Triangle
     return;
 end
 
-result = 1;                      % intersectP is in Triangle
+dist = 0.1;
+if w < [dist,dist,dist]
+    result = 1;                    % intersectP is in Triangle
+    return;
+end
+
+result = 0;
 end
 
 
