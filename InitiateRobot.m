@@ -1,4 +1,4 @@
-function [board,cell,kinova,var,pieces] = InitiateRobot()
+function [board,cell,kinova,var,pieces,cards] = InitiateRobot()
 %% Settings
 for i=1
     % Maybe the stucture var is not necessary, we could always put the
@@ -24,6 +24,7 @@ end
 
 %% Plot environment
 for i=1
+    cd environment
     % Plot board - Structure board has all the info related with the board and its position
     board.img = imread('map.jpg');                  % Load the board image
     board.xImage = [-0.4 0.4; -0.4 0.4];            % X data for the image corners
@@ -38,24 +39,40 @@ for i=1
     table = LocateParts(table,'table');
     
     % Plot floor
-    img = imread('floor.jpg');          % Load a sample image (floor)
-    xImage = [1 -1; 1 -1];      % The x data for the image corners
-    yImage = [1 1; -1 -1];          % The y data for the image corners
-    zImage = [-0.75 -0.75; -0.75 -0.75];% The z data for the image corners
-    surf(xImage,yImage,zImage,...       % Plot the surface
+    img = imread('floor.jpg');                  % Load a sample image (floor)
+    xImage = [1.5 -1.5; 1.5 -1.5];              % The x data for the image corners
+    yImage = [1.5 1.5; -1.5 -1.5];              % The y data for the image corners
+    zImage = [-0.75 -0.75; -0.75 -0.75];        % The z data for the image corners
+    surf(xImage,yImage,zImage,...               % Plot the surface
         'CData',img,...
         'FaceColor','texturemap');
     
     % Plot background
-    img = imread('background.jpg');     % Load an image (front)
-    xImage = [-1 1; -1 1];   % The x data for the image corners
-    yImage = [-1 -1; -1 -1]; % The y data for the image corners
-    zImage = [1 1; -0.75 -0.75];         % The z data for the image corners
-    surf(xImage,yImage,zImage,...    % Plot the surface
+    img = imread('background.jpg');             % Load an image (front)
+    xImage = [-1.5 1.5; -1.5 1.5];              % The x data for the image corners
+    yImage = [-1.5 -1.5; -1.5 -1.5];            % The y data for the image corners
+    zImage = [1.5 1.5; -0.75 -0.75];            % The z data for the image corners
+    surf(xImage,yImage,zImage,...               % Plot the surface
         'CData',img,...
         'FaceColor','texturemap');
-    hold on
     
+    % Plot sensor
+    sensor.pos = [0,0,-0.05];
+    sensor = LocateParts(sensor,'PIR Sensor');
+    
+    % Plot stop button
+    eStopButton.pos = [0,1.4,-0.23];
+    eStopButton = LocateParts(eStopButton,'eStop');
+    tablePiece.pos = [0,1.4,-0.75];
+    tablePiece = LocateParts(tablePiece,'tablePiece');
+        
+    % Plot cards
+    cards.chance.pos = [0.19,-0.19,0];
+    cards.chance = LocateParts(cards.chance,'chance');
+    cards.chest.pos = [-0.19,0.19,0];
+    cards.chest = LocateParts(cards.chest,'chest');
+    
+    cd ..
  end
 
 %% DH parameters

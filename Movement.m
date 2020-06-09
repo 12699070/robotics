@@ -1,4 +1,4 @@
-function endCell = Movement(currentPlayerLocation,playerNumber,diceNumber,board,cell,kinova,var,piece,brick)
+function endCell = Movement(currentPlayerLocation,playerNumber,diceNumber,board,cell,kinova,var,piece,brick,collision)
 %% Player locations
 for i=1
     currentCell = currentPlayerLocation(playerNumber);
@@ -129,21 +129,21 @@ for j=1
                 jointTrajectory = jtraj(currentQ,endQ,var.robotStep);
                 for trajStep = 1:size(jointTrajectory,1)
                     q1 = jointTrajectory(trajStep,:);
-                    
-                    % Check for collision before each step
-                    result = IsCollision(kinova,q1,brick,true);
-                    if result == true
-                        EStopState(2);
-                        % Update position of the brick from figure data
-                        fig = findobj(gca,'Type','patch');
-                        xData =  get(fig,'Xdata');
-                        yData =  get(fig,'Ydata');
-                        zData =  get(fig,'Zdata');
-                        brick.pos = [mean(cell2mat(xData(2)),'all'), mean(cell2mat(yData(2)),'all'), mean(cell2mat(zData(2)),'all')];
-                        brick.pose = makehgtform('translate',brick.pos);
-                        brick.updatedPoints = (brick.pose * [brick.verts,ones(brick.vertexCount,1)]')'; 
-                    end
-                    
+                    if collision == true
+                        % Check for collision before each step
+                        result = CollisionDetection(kinova,q1,brick,true);
+                        if result == true
+                            EStopState(2);
+                            % Update position of the brick from figure data
+                            fig = findobj(gca,'Type','patch');
+                            xData =  get(fig,'Xdata');
+                            yData =  get(fig,'Ydata');
+                            zData =  get(fig,'Zdata');
+                            brick.pos = [mean(cell2mat(xData(2)),'all'), mean(cell2mat(yData(2)),'all'), mean(cell2mat(zData(2)),'all')];
+                            brick.pose = makehgtform('translate',brick.pos);
+                            brick.updatedPoints = (brick.pose * [brick.verts,ones(brick.vertexCount,1)]')'; 
+                        end
+                    end                    
                     kinova.animate(q1);
                 end
                 animateGuessQ = false; %once
@@ -192,20 +192,21 @@ for j=1
                 plot3(x(1,:),x(2,:),x(3,:),'k.','LineWidth',1)
             end
             for j = 1:size(qMatrix)
-                % Check for collision before each step
-                result = IsCollision(kinova,qMatrix(j,:),brick,true);
-                if result == true
-                    EStopState(2);
-                    % Update position of the brick from figure data
-                    fig = findobj(gca,'Type','patch');
-                    xData =  get(fig,'Xdata');
-                    yData =  get(fig,'Ydata');
-                    zData =  get(fig,'Zdata');
-                    brick.pos = [mean(cell2mat(xData(2)),'all'), mean(cell2mat(yData(2)),'all'), mean(cell2mat(zData(2)),'all')];
-                    brick.pose = makehgtform('translate',brick.pos);
-                    brick.updatedPoints = (brick.pose * [brick.verts,ones(brick.vertexCount,1)]')'; 
-                end
-                    
+                if collision == true
+                    % Check for collision before each step
+                    result = CollisionDetection(kinova,qMatrix(j,:),brick,true);
+                    if result == true
+                        EStopState(2);
+                        % Update position of the brick from figure data
+                        fig = findobj(gca,'Type','patch');
+                        xData =  get(fig,'Xdata');
+                        yData =  get(fig,'Ydata');
+                        zData =  get(fig,'Zdata');
+                        brick.pos = [mean(cell2mat(xData(2)),'all'), mean(cell2mat(yData(2)),'all'), mean(cell2mat(zData(2)),'all')];
+                        brick.pose = makehgtform('translate',brick.pos);
+                        brick.updatedPoints = (brick.pose * [brick.verts,ones(brick.vertexCount,1)]')'; 
+                    end
+                end                    
                 kinova.animate(qMatrix(j,:));
                 
                 % Update piece location
@@ -236,20 +237,21 @@ for i=1
     jointTrajectory = jtraj(currentQ,endQ,var.robotStep);
     for trajStep = 1:size(jointTrajectory,1)
         q1 = jointTrajectory(trajStep,:);
-        % Check for collision before each step
-        result = IsCollision(kinova,qMatrix(j,:),brick,true);
-        if result == true
-            EStopState(2);
-            % Update position of the brick from figure data
-            fig = findobj(gca,'Type','patch');
-            xData =  get(fig,'Xdata');
-            yData =  get(fig,'Ydata');
-            zData =  get(fig,'Zdata');
-            brick.pos = [mean(cell2mat(xData(2)),'all'), mean(cell2mat(yData(2)),'all'), mean(cell2mat(zData(2)),'all')];
-            brick.pose = makehgtform('translate',brick.pos);
-            brick.updatedPoints = (brick.pose * [brick.verts,ones(brick.vertexCount,1)]')'; 
-        end
-                    
+        if collision == true
+            % Check for collision before each step
+            result = CollisionDetection(kinova,qMatrix(j,:),brick,true);
+            if result == true
+                EStopState(2);
+                % Update position of the brick from figure data
+                fig = findobj(gca,'Type','patch');
+                xData =  get(fig,'Xdata');
+                yData =  get(fig,'Ydata');
+                zData =  get(fig,'Zdata');
+                brick.pos = [mean(cell2mat(xData(2)),'all'), mean(cell2mat(yData(2)),'all'), mean(cell2mat(zData(2)),'all')];
+                brick.pose = makehgtform('translate',brick.pos);
+                brick.updatedPoints = (brick.pose * [brick.verts,ones(brick.vertexCount,1)]')'; 
+            end
+        end                    
         kinova.animate(q1);
     end
 end

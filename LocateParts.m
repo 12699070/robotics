@@ -10,10 +10,8 @@ fig.verts = fig.v;
 try fig.verts = fig.v - repmat(fig.origin,fig.vertexCount,1); end
 
 % Locate the piece in its position
-fig.pieceTr = makehgtform('translate',fig.pos);
-% try fig.pieceTr = fig.pieceTr * trotz(fig.angle - pi/2); end
-
-fig.updatedPoints = [fig.pieceTr * [fig.verts,ones(fig.vertexCount,1)]']';
+fig.figTr = makehgtform('translate',fig.pos);
+fig.updatedPoints = [fig.figTr * [fig.verts,ones(fig.vertexCount,1)]']';
 
 % Scale the colours to be 0-to-1 (they are originally 0-to-255
 fig.vertexColours = [fig.data.vertex.red, fig.data.vertex.green, fig.data.vertex.blue] / 255;

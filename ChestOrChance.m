@@ -1,44 +1,51 @@
-function ChestOrChance(kinova,cardType)
-% cardType: 1-chest; 2-chance
-chestLocation = [-0.2 0.2 0.04];
-chanceLocation =[0.2 -0.2 0.04];
-qz = zeros(1,6);
+function ChestOrChance(kinova,cardType,card)
+    % cardType: 1-chest; 2-chance
+    qz = zeros(1,6);
 
-currentQ = kinova.getpos();
-if cardType == 1 %chest
+    currentQ = kinova.getpos();
+
+    if cardType == 1 % Chest
+        guessQ1 = [-0.6109    0.5236   -2.2689    1.5708   -0.6981    0.1745];
+        showQ = [1.5708    0.4363   -2.2689    1.5708    1.0472         0];
+        guessQ2 = [-0.6109    0.5236   -2.2689    1.5708   -0.6981    0.1745];
+        location = [-0.2 0.2 0.04]; % Chance location
+
+    elseif cardType == 2 % Chance
+        guessQ1 = [-0.5236   -0.5236    2.2689   -1.5708   -0.6981    0.2618];
+        showQ = [-1.5708   -0.5236    2.2689   -1.5708    1.2217         0];
+        guessQ2 = [-0.6109    0.5236   -2.2689    -1.5708   -0.6981    0.1745];   
+        location =[0.2 -0.2 0.04];  % Chest location
+    end
+
+
+    % Movement
+
     %Go to card
-    guessQ = [-0.6109    0.5236   -2.2689    1.5708   -0.6981    0.1745];
-    endQ = kinova.ikine(transl(chestLocation),guessQ,[1 1 1 0 0 0]);
+    endQ = kinova.ikine(transl(location),guessQ1,[1 1 1 0 0 0]);
     jointTrajectory = jtraj(currentQ,endQ,30);
     for trajStep = 1:size(jointTrajectory,1)
         q = jointTrajectory(trajStep,:);
         kinova.animate(q);
     end
+
     %Lift up
     currentQ = kinova.getpos();
-    endQ = kinova.ikine(transl(chestLocation(1,1),chestLocation(1,2),chestLocation(1,3)+0.1),guessQ,[1 1 1 0 0 0]);
+    card.relation = inv(kinova.fkine(currentQ)) * card.figTr; % Transform between eff and card
+    endQ = kinova.ikine(transl(location(1,1),location(1,2),location(1,3)+0.1),guessQ1,[1 1 1 0 0 0]);
     jointTrajectory = jtraj(currentQ,endQ,30);
-    for trajStep = 1:size(jointTrajectory,1)
-        q = jointTrajectory(trajStep,:);
-        kinova.animate(q);
-    end
+    MovementCard(jointTrajectory,kinova,card);
+
     % Show to the couch
     currentQ = kinova.getpos();
-    showQ = [1.5708    0.4363   -2.2689    1.5708    1.0472         0];
     jointTrajectory = jtraj(currentQ,showQ,30);
-    for trajStep = 1:size(jointTrajectory,1)
-        q = jointTrajectory(trajStep,:);
-        kinova.animate(q);
-    end    
+    MovementCard(jointTrajectory,kinova,card);
+
     % Put the card back
     currentQ = kinova.getpos();
-    guessQ = [-0.6109    0.5236   -2.2689    1.5708   -0.6981    0.1745];
-    endQ = kinova.ikine(transl(chestLocation),guessQ,[1 1 1 0 0 0]);
+    endQ = kinova.ikine(transl(location),guessQ2,[1 1 1 0 0 0]);
     jointTrajectory = jtraj(currentQ,endQ,30);
-    for trajStep = 1:size(jointTrajectory,1)
-        q = jointTrajectory(trajStep,:);
-        kinova.animate(q);
-    end
+    MovementCard(jointTrajectory,kinova,card);
+
     % Go home
     currentQ = kinova.getpos();
     endQ = qz;
@@ -47,48 +54,17 @@ if cardType == 1 %chest
         q = jointTrajectory(trajStep,:);
         kinova.animate(q);
     end
-end
 
-if cardType == 2 %chance
-    %Go to card
-    guessQ = [-0.5236   -0.5236    2.2689   -1.5708   -0.6981    0.2618];
-    endQ = kinova.ikine(transl(chanceLocation),guessQ,[1 1 1 0 0 0]);
-    jointTrajectory = jtraj(currentQ,endQ,30);
+end
+%% Movement of the card
+function MovementCard(jointTrajectory,kinova,card)
     for trajStep = 1:size(jointTrajectory,1)
         q = jointTrajectory(trajStep,:);
         kinova.animate(q);
-    end
-    %Lift up
-    currentQ = kinova.getpos();
-    endQ = kinova.ikine(transl(chanceLocation(1,1),chanceLocation(1,2),chanceLocation(1,3)+0.1),guessQ,[1 1 1 0 0 0]);
-    jointTrajectory = jtraj(currentQ,endQ,30);
-    for trajStep = 1:size(jointTrajectory,1)
-        q = jointTrajectory(trajStep,:);
-        kinova.animate(q);
-    end
-    % Show to the couch
-    currentQ = kinova.getpos();
-    showQ = [-1.5708   -0.5236    2.2689   -1.5708    1.2217         0];
-    jointTrajectory = jtraj(currentQ,showQ,30);
-    for trajStep = 1:size(jointTrajectory,1)
-        q = jointTrajectory(trajStep,:);
-        kinova.animate(q);
-    end    
-    % Put the card back
-    currentQ = kinova.getpos();
-    guessQ = [-0.6109    0.5236   -2.2689    -1.5708   -0.6981    0.1745];
-    endQ = kinova.ikine(transl(chanceLocation),guessQ,[1 1 1 0 0 0]);
-    jointTrajectory = jtraj(currentQ,endQ,30);
-    for trajStep = 1:size(jointTrajectory,1)
-        q = jointTrajectory(trajStep,:);
-        kinova.animate(q);
-    end
-    %Go home
-    currentQ = kinova.getpos();
-    endQ = qz;
-    jointTrajectory = jtraj(currentQ,endQ,30);
-    for trajStep = 1:size(jointTrajectory,1)
-        q = jointTrajectory(trajStep,:);
-        kinova.animate(q);
+        
+        % Update piece location
+        card.pose = kinova.fkine(q) * card.relation;
+        card.updatedPoints = (card.pose * [card.verts,ones(card.vertexCount,1)]')';     % Transform the vertices
+        card.mesh_h.Vertices = card.updatedPoints(:,1:3);                             % Update the mesh vertices in the patch handle
     end
 end
