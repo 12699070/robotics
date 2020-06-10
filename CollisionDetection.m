@@ -1,11 +1,11 @@
-%% IsCollision
+%% Collision Detection
 % Function obtained from Lab9 - Quiz 4 
 
 % robot = Robot model
 % qMatrix = Joint state vector (trajectory)
 % faces,vertex,faceNormals = Triangles obstacle
 
-function result = IsCollision(robot,qMatrix,brick,returnOnceFound)
+function result = CollisionDetection(robot,qMatrix,brick,returnOnceFound)
 if nargin < 4
     returnOnceFound = true;
 end
