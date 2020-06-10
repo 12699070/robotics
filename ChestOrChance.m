@@ -8,13 +8,13 @@ function ChestOrChance(kinova,cardType,card)
         guessQ1 = [-0.6109    0.5236   -2.2689    1.5708   -0.6981    0.1745];
         showQ = [1.5708    0.4363   -2.2689    1.5708    1.0472         0];
         guessQ2 = [-0.6109    0.5236   -2.2689    1.5708   -0.6981    0.1745];
-        location = [-0.2 0.2 0.04]; % Chance location
+        location = [-0.2 0.2 0.04]; % Chest location
 
     elseif cardType == 2 % Chance
         guessQ1 = [-0.5236   -0.5236    2.2689   -1.5708   -0.6981    0.2618];
         showQ = [-1.5708   -0.5236    2.2689   -1.5708    1.2217         0];
         guessQ2 = [-0.6109    0.5236   -2.2689    -1.5708   -0.6981    0.1745];   
-        location =[0.2 -0.2 0.04];  % Chest location
+        location =[0.2 -0.2 0.04];  % Chance location
     end
 
 
