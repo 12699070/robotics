@@ -1,18 +1,16 @@
 function [board,cell,kinova,var,pieces,cards] = InitiateRobot()
 %% Settings
 for i=1
-    % Maybe the stucture var is not necessary, we could always put the
-    % variables we want in the other function (Movement.m)
-    var.plotCellMarker = false;
+    var.plotCellMarker = false; % Plot the path
     markerSize = 50;
 end
 
 %% Input positions and offsets
 for i=1
     % Offsets
-    var.zOffset.EEF = 0.035; % Offset EEF in Z-dir so it wont touch the game board
-    var.zOffset.pieces = 0.005;
-    var.zOffset.Marker = 0; %was 0
+    var.zOffset.EEF = 0.035;    % Offset EEF in Z-dir so it wont touch the game board
+    var.zOffset.pieces = 0.005; % Offset pieces in Z-dir so they slide on the game board
+    var.zOffset.Marker = 0;     %was 0
     
     % Initial joint angles
     homePos = deg2rad([0 0 0 0 0 0]);
@@ -24,7 +22,7 @@ end
 
 %% Plot environment
 for i=1
-    cd environment
+    cd Environment\     % Go to the folder Environment
     % Plot board - Structure board has all the info related with the board and its position
     board.img = imread('map.jpg');                  % Load the board image
     board.xImage = [-0.4 0.4; -0.4 0.4];            % X data for the image corners
@@ -72,7 +70,7 @@ for i=1
     cards.chest.pos = [-0.19,0.19,0];
     cards.chest = LocateParts(cards.chest,'chest');
     
-    cd ..
+    cd ..       % Get out of the folder
  end
 
 %% DH parameters
@@ -111,8 +109,8 @@ for i=1
     board.side4.xOffsetMarker = 0.35;
     board.side4.yOffsetMarker = linspace(board.side4.start(1,2),board.side4.end(1,2),numSmallCell);
     
-    %Assigning cells
-    cellLocation = zeros(41,3); %preallocate
+    % Assigning cells
+    cellLocation = zeros(41,3); % preallocate
     % Cell 1 (Start)
     cell{1} = [0.35 -0.35 var.zOffset.Marker];
     % Cell 2 to 10 (side 1)
