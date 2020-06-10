@@ -175,7 +175,7 @@ for j=1
                 invJ = inv(J'*J + lambda *eye(6))*J';                                       % DLS Inverse
                 
                 % Joint velocities
-                qdot(i,:) = (invJ*xdot)';                                                   % Solve the RMRC equation (you may need to transpose the vector)
+                qdot(i,:) = (invJ*xdot)';                                                   % Solve the RMRC equation
                 
                 % Check close to joint limits
                 for j = 1:6                                                                 % Loop through joints 1 to 6
