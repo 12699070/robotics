@@ -17,10 +17,9 @@ function ChestOrChance(kinova,cardType,card)
         location =[0.2 -0.2 0.04];  % Chance location
     end
 
-
     % Movement
 
-    %Go to card
+    % Go to card
     endQ = kinova.ikine(transl(location),guessQ1,[1 1 1 0 0 0]);
     jointTrajectory = jtraj(currentQ,endQ,30);
     for trajStep = 1:size(jointTrajectory,1)
@@ -28,7 +27,7 @@ function ChestOrChance(kinova,cardType,card)
         kinova.animate(q);
     end
 
-    %Lift up
+    % Lift up
     currentQ = kinova.getpos();
     card.relation = inv(kinova.fkine(currentQ)) * card.figTr; % Transform between eff and card
     endQ = kinova.ikine(transl(location(1,1),location(1,2),location(1,3)+0.1),guessQ1,[1 1 1 0 0 0]);
@@ -64,7 +63,7 @@ function MovementCard(jointTrajectory,kinova,card)
         
         % Update piece location
         card.pose = kinova.fkine(q) * card.relation;
-        card.updatedPoints = (card.pose * [card.verts,ones(card.vertexCount,1)]')';     % Transform the vertices
-        card.mesh_h.Vertices = card.updatedPoints(:,1:3);                             % Update the mesh vertices in the patch handle
+        card.updatedPoints = (card.pose * [card.verts,ones(card.vertexCount,1)]')';
+        card.mesh_h.Vertices = card.updatedPoints(:,1:3); 
     end
 end

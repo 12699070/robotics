@@ -1,5 +1,7 @@
 function EStopState(type)
 
+% When  value = true -> Program working
+%       value = false -> Program stopped
 persistent value
 
 if isempty(value)
@@ -21,7 +23,7 @@ if value == true
     value = false;
     uiwait;
         
-elseif (value == false) && (type == 1)
+elseif (value == false) && (type == 1)  % It only resumes with the button
     disp('RESUME')
     value = true;
     uiresume;
