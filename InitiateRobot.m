@@ -149,7 +149,7 @@ for i=1
     kinova.base(1:3,4) = [0 0 0];
     disp('Created kinova base')
     for linkIndex = 0:6
-        [ faceData, vertexData, plyData{linkIndex + 1} ] = plyread(['kinovaLink',num2str(linkIndex),'.ply'],'tri'); %#ok<AGROW>
+        [ faceData, vertexData, plyData{linkIndex + 1} ] = plyread(['PLY\kinovaLink',num2str(linkIndex),'.ply'],'tri'); %#ok<AGROW>
         kinova.faces{linkIndex + 1} = faceData;
         kinova.points{linkIndex + 1} = vertexData;
     end
@@ -175,7 +175,7 @@ for i=1
     end
     
     %% Locate the pieces in the GO cell
-    pieces.name = {'p1TopHat','p2WheelBarrow','p3Thimble','p4Iron'};
+    pieces.name = {'PLY\p1TopHat','PLY\p2WheelBarrow','PLY\p3Thimble','PLY\p4Iron'};
     % Creat offsets in the first cell
     pieces.offsets =    [0.035,0.015,var.zOffset.pieces; ...
                         0.035,-0.038,var.zOffset.pieces;...
